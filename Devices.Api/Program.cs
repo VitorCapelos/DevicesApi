@@ -29,7 +29,11 @@ builder.Services.AddScoped<IValidator<DeviceUpdateDto>, DeviceUpdateValidator>()
 
 // Swagger and OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => 
+{ 
+    var xml = Path.Combine(AppContext.BaseDirectory, "Devices.Api.xml"); 
+    c.IncludeXmlComments(xml, includeControllerXmlComments: true); 
+});
 builder.Services.AddOpenApi();
 
 // Health checks
