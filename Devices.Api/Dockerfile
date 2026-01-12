@@ -2,11 +2,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-COPY Devices.sln ./
+COPY DevicesApi.sln ./
+
 COPY Devices.Api/Devices.Api.csproj Devices.Api/
 COPY Devices.Domain/Devices.Domain.csproj Devices.Domain/
 COPY Devices.Infrastructure/Devices.Infrastructure.csproj Devices.Infrastructure/
-RUN dotnet restore Devices.sln
+COPY Devices.Tests/Devices.Tests.csproj Devices.Tests/
+RUN dotnet restore DevicesApi.sln
 
 COPY . .
 RUN dotnet publish Devices.Api/Devices.Api.csproj -c Release -o /app/publish

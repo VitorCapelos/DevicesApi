@@ -1,9 +1,10 @@
+using Devices.Api.Models;
 using Devices.Infrastructure.Data;
 using Devices.Infrastructure.Repositories;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using FluentValidation;
-using Devices.Api.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +28,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddScoped<IValidator<DeviceCreateDto>, DeviceCreateValidator>();
 builder.Services.AddScoped<IValidator<DeviceUpdateDto>, DeviceUpdateValidator>();
 
-// Swagger and OpenAPI
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => 
 { 
     var xml = Path.Combine(AppContext.BaseDirectory, "Devices.Api.xml"); 
     c.IncludeXmlComments(xml, includeControllerXmlComments: true); 
 });
-builder.Services.AddOpenApi();
 
 // Health checks
 builder.Services.AddHealthChecks().AddDbContextCheck<DevicesDbContext>();
@@ -49,14 +49,13 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DevicesDbContext>();
-    dbContext.Database.Migrate();
-    await DbSeeder.SeedAsync(dbContext);
+    dbContext.Database.Migrate();              // creates DevicesDb automatically
+    await DbSeeder.SeedAsync(dbContext);       // seeds data so API works first try
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

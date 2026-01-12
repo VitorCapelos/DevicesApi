@@ -1,29 +1,22 @@
-version: "3.9"
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: devices_sql
+    container_name: sqlserver
     environment:
+      - SA_PASSWORD=YourStrong!Passw0rd
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Your_password123
     ports:
       - "1433:1433"
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Your_password123 -Q 'SELECT 1' || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   api:
     build:
       context: .
       dockerfile: Devices.Api/Dockerfile
-    container_name: devices_api
+    container_name: api
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__SqlServer=Server=localhost,1433;Database=DevicesDb;User Id=sa;Password=123456;TrustServerCertificate=True;
+      - ConnectionStrings__SqlServer=Server=sqlserver,1433;Database=DevicesDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
     ports:
       - "8080:8080"
