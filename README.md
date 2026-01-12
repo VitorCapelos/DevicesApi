@@ -36,6 +36,8 @@ This project demonstrates modern backend practices: C# 13+, .NET, Entity Framewo
 docker compose up --build
 ```
 
+Or just set Docker Compose as Startup Project, and run it from Visual Studio.
+
 Then you should be able to open `http://localhost:8080/swagger/index.html` in you Web Browser to read the documentation and use the API
 
 ## Swagger
